@@ -5,7 +5,7 @@ import HangManContainer from "../container/hangman.container";
 import { keyboard } from "../description/alphabet";
 import { images } from "../description/images";
 import { wordList } from "../description/wordList";
-import { compareTwoArray } from "../utils";
+import { TOTAL_MOVE } from "../constant";
 
 const HangMan = () => {
   const {
@@ -26,22 +26,24 @@ const HangMan = () => {
           <img src={images[currentMove]} alt="" />
         </div>
         <div>
-          {word.map((char, index) => (
+          {word.split("").map((char, index) => (
             <input key={index} disabled value={rightGuess[index] ?? ""} />
           ))}
           <div style={{ margin: 20 }}>Hint :- {wordList[index].hint}</div>
-          <h3>Move :- {currentMove}/6</h3>
-          {keyboard.map((ele, index) => {
+          <h3>
+            Move :- {currentMove}/{TOTAL_MOVE}
+          </h3>
+          {keyboard.map((row, index) => {
             return (
               <div key={index}>
-                {ele.map((char, index) => {
+                {row.map((key, index) => {
                   return (
                     <button
                       key={index}
                       onClick={clickHandler}
-                      disabled={buttonDisable(char)}
+                      disabled={buttonDisable(key)}
                     >
-                      {char}
+                      {key}
                     </button>
                   );
                 })}
@@ -65,7 +67,7 @@ const HangMan = () => {
           <h3>Word :- {wordList[index].word}</h3>
         </>
       )}
-      {compareTwoArray(rightGuess, word) && (
+      {word === rightGuess.join("") && (
         <h1>
           <img src={win} alt="win" style={{ width: 40, marginTop: 5 }} /> You
           Win.

@@ -1,40 +1,39 @@
 import { useEffect, useState } from "react";
-import { wordList } from "../description/wordList";
 import { RANDOM_NUMBER_RANGE, TOTAL_MOVE } from "../constant";
-import { compareTwoArray } from "../utils";
+import { wordList } from "../description/wordList";
 
 const HangManContainer = () => {
   const [index, setIndex] = useState(
     Math.floor(Math.random() * RANDOM_NUMBER_RANGE)
   );
-  const [word, setWord] = useState(wordList[index].word.split(""));
-  const [wrongGuess, setWrongGuess] = useState([]);
+  const [word, setWord] = useState(wordList[index].word);
   const [rightGuess, setRightGuess] = useState([]);
+  const [wrongGuess, setWrongGuess] = useState("");
 
   const clickHandler = (e) => {
     const { innerText } = e.target;
-    const a = [...rightGuess];
-    word.forEach((char, index) => {
-      if (innerText === char) {
-        a[index] = char;
-      }
-    });
+    const rightGuessClone = [...rightGuess];
 
-    if (!word.find((char) => char === innerText)) {
-      return setWrongGuess((prev) => [...prev, innerText]);
+    for (let index in word) {
+      if (innerText === word[index]) {
+        rightGuessClone[index] = word[index];
+      }
     }
 
-    setRightGuess(a);
+    if (!word.includes(innerText)) {
+      return setWrongGuess((prev) => prev + innerText);
+    }
+    setRightGuess(rightGuessClone);
   };
 
   useEffect(() => {
-    setWord(wordList[index].word.split(""));
+    setWord(wordList[index].word);
   }, [index]);
 
   const restartHandler = () => {
     setIndex(Math.floor(Math.random() * RANDOM_NUMBER_RANGE));
     setRightGuess([]);
-    setWrongGuess([]);
+    setWrongGuess("");
   };
 
   const currentMove = wrongGuess.length;
@@ -44,7 +43,7 @@ const HangManContainer = () => {
       gameOver ||
       rightGuess.includes(value) ||
       wrongGuess.includes(value) ||
-      compareTwoArray(rightGuess, word)
+      word === rightGuess.join("")
     );
   };
   return {
